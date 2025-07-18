@@ -10,46 +10,48 @@ This project implements a Model Context Protocol (MCP) server for controlling a 
 
 ## Installation
 
--   On Windows:
+This project uses `uv` for package and environment management.
+
+1.  **Create a virtual environment:**
     ```bash
     uv venv
-    .venv\Scripts\activate
+    ```
+
+2.  **Activate the virtual environment:**
+    -   On Windows:
+        ```bash
+        .venv\Scripts\activate
+        ```
+    -   On macOS/Linux:
+        ```bash
+        source .venv/bin/activate
+        ```
+
+3.  **Install dependencies:**
+    ```bash
     uv pip install -r requirements.txt
     ```
 
 ## Running the Server
 
 To run the MCP server, execute the following command from the `microscope-server` directory:
+
 ```bash
-python server.py
+uvicorn server:app --host 127.0.0.1 --port 8000
 ```
 
-## Running the Test Client
-
-A test client is provided to demonstrate how to interact with the server's tools.
-Run the test client:
-    ```bash
-    python test_client.py
-    ```
-
 ## MCP Configuration
-To use this server with an MCP-compatible client, you will need to configure it in your client's settings. Here is an example configuration:
+
+This server runs as a remote SSE server. To use this server with an MCP-compatible client, you will need to configure it in your client's settings. Here is an example configuration:
 
 ```json
 {
   "mcpServers": {
     "microscope": {
-      "command": "python",
-      "args": [
-        "path/to/your/project/microscope-server/server.py"
-      ],
-      "cwd": "path/to/your/project/microscope-server",
+      "url": "http://127.0.0.1:8000",
       "disabled": false,
       "alwaysAllow": [],
       "disabledTools": []
     }
   }
 }
-```
-
-Replace `path/to/your/project` with the absolute path to the project directory. The `command` should be the python executable within the virtual environment if you want to be specific, or just `python` if the virtual environment is activated in the context where the MCP client is launched.
