@@ -23,16 +23,21 @@ def main():
                 break
             if user_input.strip().lower() == "gtxy":
                 s.sendall(b"gtsg")
-                print("geting stage loc")
+                print("Requesting stage location...")
+                data = s.recv(8)
+                print(data)
+                if len(data) == 8:
+                    x, y = struct.unpack("!ff", data)
+                    print(f"Stage location received: x={x}, y={y}")
+                else:
+                    print("Failed to receive stage location.")
                 break
-
             try:
                 value = float(user_input)
                 packed = struct.pack("!f", value)
                 s.sendall(packed)
             except ValueError:
                 print("Invalid input. Please enter a valid float, 'quit', or 'close'.")
-
 
 if __name__ == "__main__":
     main()

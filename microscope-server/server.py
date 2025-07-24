@@ -23,6 +23,11 @@ def handle_client(conn, addr):
                 print(f"Client {addr} requested server shutdown.")
                 shutdown_event.set()
                 break
+            if data == b'gtsg':
+                print(f"Client {addr} requested stage location. Sending 300.0, 499.9.")
+                response = struct.pack('!ff', 300.0, 499.9)
+                conn.sendall(response)
+                continue
             try:
                 value = struct.unpack('!f', data)[0]
                 print(f"Received from {addr}: {value}")
