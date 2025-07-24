@@ -11,7 +11,7 @@ def main():
         print(f"Connected to server at {HOST}:{PORT}")
         while True:
             user_input = input(
-                "Enter a float value to send, 'quit' to exit, or 'close' to shutdown server: "
+                "Enter a float value to send, 'move' to send coordinates, 'gtxy' to get stage, 'quit' to exit, or 'close' to shutdown server: "
             )
             if user_input.strip().lower() == "quit":
                 s.sendall(b"quit")
@@ -32,12 +32,22 @@ def main():
                 else:
                     print("Failed to receive stage location.")
                 break
+            if user_input.strip().lower() == "move":
+                try:
+                    x = float(input("Enter X coordinate: "))
+                    y = float(input("Enter Y coordinate: "))
+                    s.sendall(b"move")
+                    s.sendall(struct.pack("!ff", x, y))
+                    print(f"Sent move command with coordinates: x={x}, y={y}")
+                except ValueError:
+                    print("Invalid coordinates. Please enter valid float values.")
+                continue
             try:
                 value = float(user_input)
                 packed = struct.pack("!f", value)
                 s.sendall(packed)
             except ValueError:
-                print("Invalid input. Please enter a valid float, 'quit', or 'close'.")
+                print("Invalid input. Please enter a valid float, 'move', 'gtxy', 'quit', or 'close'.")
 
 if __name__ == "__main__":
     main()

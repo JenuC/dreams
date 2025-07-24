@@ -28,6 +28,14 @@ def handle_client(conn, addr):
                 response = struct.pack('!ff', 300.0, 499.9)
                 conn.sendall(response)
                 continue
+            if data == b'move':
+                coords = conn.recv(8)
+                if len(coords) == 8:
+                    x, y = struct.unpack('!ff', coords)
+                    print(f"Client {addr} requested move to: x={x}, y={y}")
+                else:
+                    print(f"Client {addr} sent incomplete move coordinates: {coords}")
+                continue
             try:
                 value = struct.unpack('!f', data)[0]
                 print(f"Received from {addr}: {value}")
