@@ -1,23 +1,28 @@
 import socket
 import threading
 import struct
+import sys
 
 HOST = '0.0.0.0'  # Listen on all interfaces
 PORT = 5000       # Arbitrary non-privileged port
+
+shutdown_event = threading.Event()
 
 # Helper to handle each client
 def handle_client(conn, addr):
     print(f"Connected by {addr}")
     try:
-        while True:
-            # First, receive 4 bytes (float) or 4 bytes of 'quit'
+        while not shutdown_event.is_set():
             data = conn.recv(4)
             if not data:
                 break
             if data == b'quit':
                 print(f"Client {addr} requested to quit.")
                 break
-            # Unpack float (network byte order)
+            if data == b'clos':
+                print(f"Client {addr} requested server shutdown.")
+                shutdown_event.set()
+                break
             try:
                 value = struct.unpack('!f', data)[0]
                 print(f"Received from {addr}: {value}")
@@ -33,10 +38,23 @@ def main():
         s.bind((HOST, PORT))
         s.listen()
         print(f"Server listening on {HOST}:{PORT}")
-        while True:
-            conn, addr = s.accept()
-            thread = threading.Thread(target=handle_client, args=(conn, addr), daemon=True)
-            thread.start()
+        threads = []
+        while not shutdown_event.is_set():
+            try:
+                s.settimeout(1.0)
+                conn, addr = s.accept()
+                thread = threading.Thread(target=handle_client, args=(conn, addr), daemon=True)
+                thread.start()
+                threads.append(thread)
+            except socket.timeout:
+                continue
+            except OSError:
+                break
+        print("Server shutting down. Waiting for client threads to finish...")
+        shutdown_event.set()
+        for t in threads:
+            t.join()
+        print("Server has shut down.")
 
 if __name__ == "__main__":
     main() 
