@@ -1,4 +1,0 @@
-pydantic
-git+https://github.com/modelcontextprotocol/python-sdk
-uvicorn
-starlette
