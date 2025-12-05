@@ -1,0 +1,14 @@
+[project]
+name = "dreams"
+version = "0.1.0"
+description = "DReAMS – Data-Reactive Acquisition and Microscope Steering."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "mcp",
+    "streamlit",
+    "langchain",
+    "pycromanager",
+    #"pymmcore-plus",
+    #"ndv[jup]",
+    ]
