@@ -11,4 +11,5 @@ dependencies = [
     "pycromanager",
     #"pymmcore-plus",
     #"ndv[jup]",
-    ]
+    "marimo>=0.18.2",
+]
