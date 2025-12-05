@@ -1,5 +1,8 @@
 from mcp.server.fastmcp import FastMCP
 from microscope_api import Microscope
+import io
+from PIL import Image
+import numpy as np
 
 # Initialize microscope
 scope = Microscope()
@@ -31,16 +34,27 @@ def wait(seconds: float):
     return scope.wait(seconds)
 
 
-@mcp.resource("microscope://latest_image")
-def latest_image():
-    """
-    Expose the latest image as a read-only MCP resource.
-    """
-    img = scope.get_image()
+# @mcp.resource("microscope://latest_image")
+# def latest_image():
+#     """
+#     Expose the latest image as a read-only MCP resource.
+#     """
+#     img = scope.get_image()
 
-    # MCP resources must return JSON-serializable objects
-    # Convert numpy array to nested lists
-    return img.tolist()
+#     # MCP resources must return JSON-serializable objects
+#     # Convert numpy array to nested lists
+#     return img.tolist()
+
+
+#@mcp.resource("latest_image", mime_type="image/png")
+@mcp.resource("microscope://latest_image", mime_type="image/png")
+def latest_image():
+    arr = np.random.randint(0,255,(120,120,3), dtype=np.uint8)
+    img = Image.fromarray(arr)
+
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return buf.getvalue()   # BYTES, NOT STRING
 
 
 @mcp.prompt()
