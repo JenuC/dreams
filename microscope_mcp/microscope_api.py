@@ -1,3 +1,7 @@
+import numpy as np
+import time
+
+
 class Microscope:
     def __init__(self):
         self.position = {"x": 0.0, "y": 0.0, "z": 0.0}
@@ -15,3 +19,9 @@ class Microscope:
             "filename": "image_0001.tif",
             "note": "Mock image captured",
         }
+
+    def get_image(self):
+        return np.random.rand(1024, 1024)
+
+    def wait(self, seconds: float):
+        time.sleep(seconds)
