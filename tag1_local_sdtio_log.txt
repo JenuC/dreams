@@ -1,0 +1,148 @@
+
+ git clone https://github.com/jenuc/dreams
+ cd .\dreams\
+> uv sync
+
+Supported models:
+     - "claude-sonnet-4.5"
+     - "claude-haiku-4.5"
+     - "claude-opus-4.5"
+     - "claude-sonnet-4"
+     - "gpt-5"
+     - "gpt-5.1"
+     - "gpt-5.1-codex-mini"
+     - "gpt-5.1-codex"
+     - "gpt-5-mini"
+     - "gpt-4.1"
+     - "gemini-3-pro-preview"
+
+Welcome to GitHub Copilot CLI
+Version 0.0.365 · Commit 76d0881
+
+ cd .\to_del\
+ copilot
+ Welcome to GitHub Copilot CLI
+ Version 0.0.365 · Commit 76d0881
+
+ Copilot can write, test and debug code right from your terminal. Describe a task to get started or enter ? for help. Copilot uses AI,
+ check for mistakes.
+
+ ● Logged in as user: JenuC
+
+ ● Configured MCP servers: SLIM_Microscope
+
+ ● Connected to GitHub MCP Server
+
+ ● MCP Server Configuration:
+
+   • SLIM_Microscope (local): Command: python
+
+   Total servers: 1
+   Config file: C:\Users\lociuser\.copilot\mcp-config.json
+
+  Edit Server: SLIM_Microscope
+
+  Server Name:
+  Unique name for this MCP server
+  ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+  │SLIM_Microscope                                                                                                                    │
+  ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  Server Type:
+  Press 1 for Local, 2 for HTTP, 3 for SSE
+  [1] Local [2] HTTP [3] SSE
+
+  Command:
+  Command to start the server (e.g., python -m my_server)
+  ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+  │C:\\Users\\lociuser\\code\\jenu\\dreams\\.venv\\Scripts\\python C:\\Users\\lociuser\\code\\jenu\\dreams\\microscope_mcp\\server.pys│
+  │                                                                                                                                   │
+  ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  Environment Variables:
+  Path is automatically inherited. All other environment variables must be configured
+  ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+  ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  Tools:
+  Tools to include: "*" for all, or comma-separated list (no quotes needed)
+  ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+  │*                                                                                                                                  │
+  ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+  Navigation:
+  • Tab/Shift+Tab: Navigate fields
+  • Ctrl+S: Save server
+  • Esc: Cancel
+‌
+ Welcome to GitHub Copilot CLI
+ Version 0.0.365 · Commit 76d0881
+
+ Copilot can write, test and debug code right from your terminal. Describe a task to get started or enter ? for help. Copilot uses AI,
+ check for mistakes.
+
+ ● Logged in as user: JenuC
+
+ ● Configured MCP servers: SLIM_Microscope
+
+ ● Connected to GitHub MCP Server
+
+ ● MCP Server Configuration:
+
+   • SLIM_Microscope (local): Command: python
+
+   Total servers: 1
+   Config file: C:\Users\lociuser\.copilot\mcp-config.json
+ ● MCP configuration saved successfully! Changes will take effect immediately.
+
+ ● Configured MCP servers: SLIM_Microscope
+
+ ● Connected to GitHub MCP Server
+
+ > #get position
+
+ ✔ get_stage_position
+   └ {"x":0,"y":0,"z":0}
+
+ ● The current microscope stage position is X: 0, Y: 0, Z: 0.
+
+ > move position to 100,40,2
+
+ ✔ move_stage
+   └ {"x":100,"y":40,"z":2}
+
+ ● The microscope stage has been moved to position X: 100, Y: 40, Z: 2.
+
+ > snap an image then?
+
+ ✔ snap_image
+   └ {"status":"ok","filename":"image_0001.tif","note":"Mock image captured"}
+
+ ● Image captured successfully. The file is named image_0001.tif.
+
+ ~\code\jenu\to_del                                                                                             gpt-4.1 (0x) ● Truncated
+ ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ >  Enter @ to mention files or / for commands
+ 
+ 
+ 
+ for sanity check
+ 
+ 
+ config 
+ 
+ {
+  "mcpServers": {
+    "SLIM_Microscope": {
+      "type": "local",
+      "command": "C:\\Users\\lociuser\\code\\jenu\\dreams\\.venv\\Scripts\\python",
+      "tools": [
+        "*"
+      ],
+      "args": [
+        "C:\\Users\\lociuser\\code\\jenu\\dreams\\microscope_mcp\\server.py"
+      ]
+    }
+  }
+}
