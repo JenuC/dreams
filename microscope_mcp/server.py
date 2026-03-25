@@ -1,7 +1,7 @@
 from mcp.server.fastmcp import FastMCP
-from microscope_api import VirtualMicroscope
+from microscope_api import VirtualMicroscope, TestImage
 
-scope = VirtualMicroscope()
+scope = VirtualMicroscope(test_image=TestImage.GRADIENT)
 mcp = FastMCP("Microscope MCP")
 
 
@@ -29,6 +29,16 @@ def get_stage_position() -> dict:
 def wait(seconds: float) -> dict:
     """Pause execution for the given number of seconds."""
     return scope.wait(seconds)
+
+
+@mcp.tool()
+def set_test_image(source: str) -> dict:
+    """Switch the virtual microscope test image. Options: 'camera', 'raccoon', 'gradient'."""
+    try:
+        scope.set_test_image(TestImage(source))
+        return {"status": "ok", "source": source}
+    except ValueError:
+        return {"status": "error", "message": f"Unknown source '{source}'. Use: camera, raccoon, gradient"}
 
 
 # --- Resources ---

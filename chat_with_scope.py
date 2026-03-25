@@ -8,9 +8,8 @@ app = marimo.App(width="medium")
 def _():
     import marimo as mo
     from PIL import Image
-    import io
-    import base64
-    return Image, base64, io
+    import json
+    return Image, json, mo
 
 
 @app.cell
@@ -22,128 +21,40 @@ def _():
 
 @app.cell
 def _():
-    ## SLIM
-
-    PYTHON = r"C:\Users\lociuser\code\jenu\dreams\.venv\Scripts\python"
-    SCRIPT = r"C:\Users\lociuser\code\jenu\dreams\microscope_mcp\server.py"
-
-    ## KRAKEN
-
     PYTHON = r"C:\Users\jenuv\code\dreams\.venv\Scripts\python.exe"
     SCRIPT = r"C:\Users\jenuv\code\dreams\microscope_mcp\server.py"
-
     return PYTHON, SCRIPT
 
 
-@app.cell
-async def _(
-    ClientSession,
-    PYTHON,
-    SCRIPT,
-    StdioServerParameters,
-    stdio_client,
-):
-    import asyncio
-
-    async def main():
-        server_params = StdioServerParameters(
-            command=PYTHON,
-            args=[SCRIPT],
-        )
-        async with stdio_client(server_params) as (read, write):
-            async with ClientSession(read, write) as session:
-                await session.initialize()
-                tools = (await session.list_tools()).tools
-                print("Available tools:")
-                for tool in tools: print(tool)
-    await main()
-    return asyncio, main
-
+# ── image source selector ─────────────────────────────────────────────────────
 
 @app.cell
-async def _(asyncio, main):
-    def run(coro):
-        try:
-            loop = asyncio.get_running_loop()
-            return coro  # marimo/jupyter: let caller await
-        except RuntimeError:
-            return asyncio.run(coro)  
+def _(mo):
+    source_picker = mo.ui.dropdown(
+        options=["gradient", "camera", "raccoon"],
+        value="gradient",
+        label="Test image source",
+    )
+    source_picker
+    return (source_picker,)
 
-    result = run(main())
-    if asyncio.iscoroutine(result):
-        result = await result
-    return
 
+# ── snap image (source from dropdown, single connection) ──────────────────────
 
 @app.cell
-async def _(
-    ClientSession,
-    PYTHON,
-    SCRIPT,
-    StdioServerParameters,
-    base64,
-    io,
-    stdio_client,
-):
-    async def fetch_latest_imagexx():
-        server_params = StdioServerParameters(
-            command=PYTHON,
-            args=[SCRIPT],
-        )
+async def _(ClientSession, Image, PYTHON, SCRIPT, StdioServerParameters, json, mo, source_picker, stdio_client):
+    _params = StdioServerParameters(command=PYTHON, args=[SCRIPT])
+    async with stdio_client(_params) as (_r2, _w2):
+        async with ClientSession(_r2, _w2) as _sess2:
+            await _sess2.initialize()
+            await _sess2.call_tool("set_test_image", {"source": source_picker.value})
+            _result = await _sess2.call_tool("snap_image", {})
 
-        async with stdio_client(server_params) as (read, write):
-            async with ClientSession(read, write) as session:
-                await session.initialize()
-
-                resources = (await session.list_resources()).resources
-                uri = str(resources[0].uri)
-
-                raw = await session.read_resource(uri)
-                content = raw.contents[0]
-
-                # ----- robust MCP payload extraction -----
-
-                if hasattr(content, "data"):           # BinaryResourceContents
-                    payload = content.data
-
-                elif hasattr(content, "blob"):         # BlobResourceContents
-                    blob = content.blob
-                    payload = base64.b64decode(blob) if isinstance(blob, str) else blob
-
-                elif hasattr(content, "text"):         # TextResourceContents
-                    print("TEXT RESOURCE:")
-                    print(content.text)
-                    return None
-
-                else:
-                    raise TypeError(f"Unhandled MCP resource type: {type(content)}")
-
-                # payload is now guaranteed bytes
-                print(len(payload))
-                img = io.BytesIO(payload)
-                return img
-
-
-    # ---- run in marimo ----
-    result3 = await fetch_latest_imagexx()
-    return (result3,)
-
-
-@app.cell
-def _(Image, result3):
-    imgx = Image.open(result3)
-    imgx
-    return
-
-
-@app.cell
-def _():
-    return
-
-
-@app.cell
-def _():
-    return
+    _data = json.loads(_result.content[0].text)
+    print("snap:", _data)
+    snap_img = Image.open(_data["image_path"])
+    mo.image(snap_img)
+    return (snap_img,)
 
 
 if __name__ == "__main__":

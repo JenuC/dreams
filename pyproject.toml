@@ -12,4 +12,5 @@ dependencies = [
     #"pymmcore-plus",
     #"ndv[jup]",
     "marimo>=0.18.2",
+    "scikit-image>=0.26.0",
 ]
