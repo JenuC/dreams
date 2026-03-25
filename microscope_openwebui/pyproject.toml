@@ -1,0 +1,16 @@
+[project]
+name = "microscope-openwebui"
+version = "0.1.0"
+description = "Open WebUI-compatible HTTP tool server for real microscope control via pycromanager."
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "numpy",
+    "pillow",
+    "pycromanager",
+    "pydantic",
+]
+
+[project.scripts]
+microscope-openwebui = "server:main"

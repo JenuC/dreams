@@ -9,3 +9,11 @@ Hence we try to make the microscope smarter, by bringing AI to the microscope:
 Data-Reactive Acquisition and Microscope Steering, aka DReAMS
 
 🔬 DReAMS: Data-Reactive Acquisition and Microscope Steering
+
+
+operation-notes
+start the http server
+    - python .\microscope_real\server.py
+    probabaly on :4201
+go to copilot and add (not local) mcp shows as tag1 http note
+once configured, agent can talk to mcp to get from microscope.
