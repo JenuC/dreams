@@ -1,0 +1,14 @@
+[project]
+name = "microscope-mcp"
+version = "0.1.0"
+description = "MCP server for microscope control (virtual and real)."
+requires-python = ">=3.13"
+dependencies = [
+    "mcp[cli]",
+    "numpy",
+    "pillow",
+    "scikit-image",  # for standard test images (camera, etc.)
+]
+
+[project.scripts]
+microscope-mcp = "server:mcp.run"
