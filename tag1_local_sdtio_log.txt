@@ -146,3 +146,14 @@ Version 0.0.365 · Commit 76d0881
     }
   }
 }
+
+for the http:
+{
+  "mcpServers": {
+    "microscope": {
+      "type": "http",
+      "url": "http://127.0.0.1:4201/mcp",
+      "tools": ["*"]
+    }
+  }
+}
