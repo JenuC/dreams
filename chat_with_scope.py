@@ -10,7 +10,7 @@ def _():
     from PIL import Image
     import io
     import base64
-    return Image, base64, io, mo
+    return Image, base64, io
 
 
 @app.cell
@@ -22,8 +22,16 @@ def _():
 
 @app.cell
 def _():
+    ## SLIM
+
     PYTHON = r"C:\Users\lociuser\code\jenu\dreams\.venv\Scripts\python"
     SCRIPT = r"C:\Users\lociuser\code\jenu\dreams\microscope_mcp\server.py"
+
+    ## KRAKEN
+
+    PYTHON = r"C:\Users\jenuv\code\dreams\.venv\Scripts\python.exe"
+    SCRIPT = r"C:\Users\jenuv\code\dreams\microscope_mcp\server.py"
+
     return PYTHON, SCRIPT
 
 
@@ -68,11 +76,19 @@ async def _(asyncio, main):
 
 
 @app.cell
-async def _(ClientSession, StdioServerParameters, base64, io, stdio_client):
+async def _(
+    ClientSession,
+    PYTHON,
+    SCRIPT,
+    StdioServerParameters,
+    base64,
+    io,
+    stdio_client,
+):
     async def fetch_latest_imagexx():
         server_params = StdioServerParameters(
-            command=r"C:\Users\lociuser\code\jenu\dreams\.venv\Scripts\python.exe",
-            args=[r"C:\Users\lociuser\code\jenu\dreams\microscope_mcp\server.py"],
+            command=PYTHON,
+            args=[SCRIPT],
         )
 
         async with stdio_client(server_params) as (read, write):
@@ -110,7 +126,6 @@ async def _(ClientSession, StdioServerParameters, base64, io, stdio_client):
 
     # ---- run in marimo ----
     result3 = await fetch_latest_imagexx()
-
     return (result3,)
 
 
@@ -123,87 +138,6 @@ def _(Image, result3):
 
 @app.cell
 def _():
-    return
-
-
-@app.cell
-def _():
-    import numpy as np
-    volume = np.random.rand(30, 200, 200)
-    return (volume,)
-
-
-@app.cell
-def _(mo, volume):
-    def _(volume):
-        z_slider = mo.ui.slider(
-            start=0,
-            stop=volume.shape[0] - 1,
-            step=1,
-            label="Z slice"
-        )
-
-        tabs = mo.ui.tabs(
-            {
-                "Slide 1 — Overview": mo.md(
-                    """
-                    ## 3D Volume Viewer Demo
-
-                    - This app shows a random 3D numpy array.
-                    - Use the Z slider to change slices.
-                    - The image updates in real time.
-                    """
-                ),
-                "Slide 2 — Controls": mo.vstack(
-                    [
-                        mo.md("### Z Navigation"),
-                        z_slider,
-                    ]
-                ),
-                "Slide 3 — Image Viewer": mo.vstack(
-                    [
-                        mo.md("### Current Slice"),
-                        z_slider,   # repeat slider for convenience
-                    ]
-                ),
-            }
-        )
-
-        return tabs, z_slider
-
-    tabs,zslider = _(volume=volume)
-
-    return (zslider,)
-
-
-@app.cell
-def _(zslider):
-    zslider
-    return
-
-
-@app.cell
-def _(mo, volume, zslider):
-    def _(volume, z_slider):
-        z = int(z_slider.value)
-        slice_img = volume[z]
-
-        viewer = mo.image(
-            src=slice_img,
-            width=450,
-            caption=f"Z = {z}"
-        )
-
-        mo.vstack(
-            [
-                mo.md("## Live Slice Viewer"),
-                viewer,
-            ]
-        )
-
-        return viewer
-
-    _(volume=volume,z_slider=zslider)
     return
 
 
