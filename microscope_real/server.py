@@ -1,8 +1,8 @@
 from mcp.server.fastmcp import FastMCP
-from microscope_api import VirtualMicroscope, TestImage
+from microscope_api import RealMicroscope
 
-scope = VirtualMicroscope(test_image=TestImage.GRADIENT)
-mcp = FastMCP("Microscope MCP", host="127.0.0.1", port=4200)
+scope = RealMicroscope()
+mcp = FastMCP("Microscope MCP (Real)", host="127.0.0.1", port=4201)
 
 
 # --- Tools ---
@@ -15,7 +15,7 @@ def snap_image() -> dict:
 
 @mcp.tool()
 def move_stage(x: float, y: float, z: float) -> dict:
-    """Move the microscope stage to the given (x, y, z) coordinates."""
+    """Move the microscope stage to the given (x, y, z) coordinates in µm."""
     return scope.move_stage(x, y, z)
 
 
@@ -29,16 +29,6 @@ def get_stage_position() -> dict:
 def wait(seconds: float) -> dict:
     """Pause execution for the given number of seconds."""
     return scope.wait(seconds)
-
-
-@mcp.tool()
-def set_test_image(source: str) -> dict:
-    """Switch the virtual microscope test image. Options: 'gradient', 'rings', 'spectrum'."""
-    try:
-        scope.set_test_image(TestImage(source))
-        return {"status": "ok", "source": source}
-    except ValueError:
-        return {"status": "error", "message": f"Unknown source '{source}'. Use: gradient, rings, spectrum"}
 
 
 # --- Resources ---
@@ -82,6 +72,6 @@ if __name__ == "__main__":
     uvicorn.run(
         mcp.streamable_http_app(),
         host="127.0.0.1",
-        port=4200,
+        port=4201,
         timeout_graceful_shutdown=0,
     )

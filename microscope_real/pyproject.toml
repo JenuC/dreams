@@ -1,0 +1,14 @@
+[project]
+name = "microscope-real-mcp"
+version = "0.1.0"
+description = "MCP server for real microscope control via pycromanager."
+requires-python = ">=3.13"
+dependencies = [
+    "mcp[cli]",
+    "numpy",
+    "pillow",
+    "pycromanager",
+]
+
+[project.scripts]
+microscope-real-mcp = "server:mcp.run"
