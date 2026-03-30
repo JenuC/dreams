@@ -30,10 +30,16 @@ class RealMicroscope:
         self._image_counter = 0
         self._last_pixels: np.ndarray | None = None
         self.position = {"x": 0.0, "y": 0.0, "z": 0.0}
+        # Use SimZ as focus device when SimCamera is loaded (simulation mode)
+        loaded_devices = self.obj_2_list(self.core.get_loaded_devices())
+        self._focus_device = "SimFocus" if "SimCam" in loaded_devices else None
 
     def move_stage(self, x: float, y: float, z: float) -> dict:
         self.core.set_xy_position(x, y)
-        self.core.set_position(z)
+        if self._focus_device:
+            self.core.set_position(self._focus_device, z)
+        else:
+            self.core.set_position(z)
         self.position = {"x": x, "y": y, "z": z}
         return self.position
 
@@ -41,7 +47,7 @@ class RealMicroscope:
         self.position = {
             "x": self.core.get_x_position(),
             "y": self.core.get_y_position(),
-            "z": self.core.get_position(),
+            "z": self.core.get_position(self._focus_device) if self._focus_device else self.core.get_position(),
         }
         return self.position
 
@@ -85,3 +91,8 @@ class RealMicroscope:
     def wait(self, seconds: float) -> dict:
         time.sleep(seconds)
         return {"status": "ok", "waited_seconds": seconds}
+
+    @staticmethod
+    def obj_2_list(name):
+        """Convert Java object to Python list."""
+        return [name.get(i) for i in range(name.size())]
