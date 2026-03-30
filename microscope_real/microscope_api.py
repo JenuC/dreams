@@ -6,7 +6,6 @@ import os
 from collections import OrderedDict
 from PIL import Image
 from pycromanager import Core
-import scyjava
 
 
 def _array_to_png_bytes(arr: np.ndarray) -> bytes:
@@ -32,7 +31,7 @@ class RealMicroscope:
         self._last_pixels: np.ndarray | None = None
         self.position = {"x": 0.0, "y": 0.0, "z": 0.0}
         # Use SimZ as focus device when SimCamera is loaded (simulation mode)
-        loaded_devices = list(scyjava.to_python(self.core.get_loaded_devices()))
+        loaded_devices = self.obj_2_list(self.core.get_loaded_devices())
         self._focus_device = "SimFocus" if "SimCam" in loaded_devices else None
 
     def move_stage(self, x: float, y: float, z: float) -> dict:
@@ -92,3 +91,8 @@ class RealMicroscope:
     def wait(self, seconds: float) -> dict:
         time.sleep(seconds)
         return {"status": "ok", "waited_seconds": seconds}
+
+    @staticmethod
+    def obj_2_list(name):
+        """Convert Java object to Python list."""
+        return [name.get(i) for i in range(name.size())]
