@@ -23,9 +23,7 @@ def load_test_image(source: TestImage) -> np.ndarray:
         size = 512
         y_coords, x_coords = np.ogrid[:size, :size]
         center_x, center_y = size // 2, size // 2
-        distance = np.sqrt(
-            (x_coords - center_x) ** 2 + (y_coords - center_y) ** 2
-        )
+        distance = np.sqrt((x_coords - center_x) ** 2 + (y_coords - center_y) ** 2)
         grayscale = (np.sin(distance / 10) * 127 + 128).astype(np.uint8)
         return np.stack([grayscale, grayscale, grayscale], axis=-1)
 

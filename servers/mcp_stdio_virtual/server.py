@@ -52,10 +52,7 @@ def set_test_image(source: str) -> dict:
         scope.set_test_image(TestImage(source))
         return {"status": "ok", "source": source}
     except ValueError:
-        message = (
-            f"Unknown source '{source}'. Use: "
-            "camera, raccoon, gradient"
-        )
+        message = f"Unknown source '{source}'. Use: " "camera, raccoon, gradient"
         return {
             "status": "error",
             "message": message,
