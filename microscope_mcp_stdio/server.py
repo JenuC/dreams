@@ -1,11 +1,25 @@
+import importlib
+import sys
+from pathlib import Path
+
 from mcp.server.fastmcp import FastMCP
-from microscope_api import VirtualMicroscope, TestImage
+
+for parent in Path(__file__).resolve().parents:
+    if (parent / "dreams").is_dir() and (parent / "pyproject.toml").is_file():
+        if str(parent) not in sys.path:
+            sys.path.insert(0, str(parent))
+        break
+
+_microscope = importlib.import_module("dreams.microscope")
+TestImage = _microscope.TestImage
+VirtualMicroscope = _microscope.VirtualMicroscope
 
 scope = VirtualMicroscope(test_image=TestImage.GRADIENT)
 mcp = FastMCP("Microscope MCP")
 
 
 # --- Tools ---
+
 
 @mcp.tool()
 def snap_image() -> dict:
@@ -33,15 +47,23 @@ def wait(seconds: float) -> dict:
 
 @mcp.tool()
 def set_test_image(source: str) -> dict:
-    """Switch the virtual microscope test image. Options: 'camera', 'raccoon', 'gradient'."""
+    """Switch the virtual microscope test image."""
     try:
         scope.set_test_image(TestImage(source))
         return {"status": "ok", "source": source}
     except ValueError:
-        return {"status": "error", "message": f"Unknown source '{source}'. Use: camera, raccoon, gradient"}
+        message = (
+            f"Unknown source '{source}'. Use: "
+            "camera, raccoon, gradient"
+        )
+        return {
+            "status": "error",
+            "message": message,
+        }
 
 
 # --- Resources ---
+
 
 @mcp.resource("microscope://latest_image", mime_type="image/png")
 def latest_image() -> bytes:
@@ -51,6 +73,7 @@ def latest_image() -> bytes:
 
 # --- Prompts ---
 
+
 @mcp.prompt()
 def tile_scan_xy(
     x_positions: list[float],
@@ -58,7 +81,7 @@ def tile_scan_xy(
     z: float,
     delay_seconds: float = 1.0,
 ) -> str:
-    """Generate a prompt to run a 2D tile scan at fixed Z with a delay between tiles."""
+    """Generate a prompt for a 2D tile scan at fixed Z."""
     return f"""
 You are controlling a microscope via MCP tools.
 
