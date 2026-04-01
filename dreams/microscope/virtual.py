@@ -12,20 +12,24 @@ from .common import array_to_png_bytes
 class TestImage(str, Enum):
     CAMERA = "camera"
     RACCOON = "raccoon"
+    RINGS = "rings"
+    SPECTRUM = "spectrum"
     GRADIENT = "gradient"
 
 
 def load_test_image(source: TestImage) -> np.ndarray:
     """Load a test image as an (H, W, 3) uint8 RGB array."""
-    if source == TestImage.CAMERA:
+    if source in (TestImage.CAMERA, TestImage.RINGS):
         size = 512
         y_coords, x_coords = np.ogrid[:size, :size]
         center_x, center_y = size // 2, size // 2
-        distance = np.sqrt((x_coords - center_x) ** 2 + (y_coords - center_y) ** 2)
+        distance = np.sqrt(
+            (x_coords - center_x) ** 2 + (y_coords - center_y) ** 2
+        )
         grayscale = (np.sin(distance / 10) * 127 + 128).astype(np.uint8)
         return np.stack([grayscale, grayscale, grayscale], axis=-1)
 
-    if source == TestImage.RACCOON:
+    if source in (TestImage.RACCOON, TestImage.SPECTRUM):
         red = np.linspace(0, 255, 512, dtype=np.uint8)
         green = np.linspace(255, 0, 512, dtype=np.uint8)
         blue = np.full(512, 128, dtype=np.uint8)
