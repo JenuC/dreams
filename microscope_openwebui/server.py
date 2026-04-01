@@ -1,7 +1,19 @@
+import importlib
+import sys
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from microscope_api import RealMicroscope
+
+for parent in Path(__file__).resolve().parents:
+    if (parent / "dreams").is_dir() and (parent / "pyproject.toml").is_file():
+        if str(parent) not in sys.path:
+            sys.path.insert(0, str(parent))
+        break
+
+_microscope = importlib.import_module("dreams.microscope")
+RealMicroscope = _microscope.RealMicroscope
 
 app = FastAPI(title="Microscope Open WebUI Tool Server")
 
@@ -11,6 +23,7 @@ scope = RealMicroscope()
 # ---------------------------------------------------------------------------
 # Pydantic models for the Open WebUI tool manifest
 # ---------------------------------------------------------------------------
+
 
 class ToolParameter(BaseModel):
     type: str
@@ -36,7 +49,7 @@ _MANIFEST = ToolManifest(
     tools=[
         ToolEntry(
             name="snap_image",
-            description="Capture an image from the microscope at the current stage position.",
+            description="Capture an image from the microscope.",
             parameters=ToolParameter(
                 type="object",
                 properties={},
@@ -45,13 +58,22 @@ _MANIFEST = ToolManifest(
         ),
         ToolEntry(
             name="move_stage",
-            description="Move the microscope stage to the given (x, y, z) coordinates in µm.",
+            description="Move the microscope stage in µm.",
             parameters=ToolParameter(
                 type="object",
                 properties={
-                    "x": {"type": "number", "description": "X coordinate in µm"},
-                    "y": {"type": "number", "description": "Y coordinate in µm"},
-                    "z": {"type": "number", "description": "Z coordinate in µm"},
+                    "x": {
+                        "type": "number",
+                        "description": "X coordinate in µm",
+                    },
+                    "y": {
+                        "type": "number",
+                        "description": "Y coordinate in µm",
+                    },
+                    "z": {
+                        "type": "number",
+                        "description": "Z coordinate in µm",
+                    },
                 },
                 required=["x", "y", "z"],
             ),
@@ -71,7 +93,10 @@ _MANIFEST = ToolManifest(
             parameters=ToolParameter(
                 type="object",
                 properties={
-                    "seconds": {"type": "number", "description": "Duration to wait in seconds"},
+                    "seconds": {
+                        "type": "number",
+                        "description": "Duration to wait in seconds",
+                    },
                 },
                 required=["seconds"],
             ),
@@ -82,13 +107,14 @@ _MANIFEST = ToolManifest(
 
 @app.get("/tools")
 def get_tools() -> dict:
-    """Return the Open WebUI tool manifest listing all available microscope tools."""
+    """Return the Open WebUI tool manifest."""
     return _MANIFEST.model_dump()
 
 
 # ---------------------------------------------------------------------------
 # Request models for tool endpoints
 # ---------------------------------------------------------------------------
+
 
 class MoveStageRequest(BaseModel):
     x: float
@@ -103,6 +129,7 @@ class WaitRequest(BaseModel):
 # ---------------------------------------------------------------------------
 # Tool endpoints
 # ---------------------------------------------------------------------------
+
 
 @app.post("/tools/snap_image")
 def snap_image():
@@ -142,4 +169,5 @@ def wait(req: WaitRequest):
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="127.0.0.1", port=4202)

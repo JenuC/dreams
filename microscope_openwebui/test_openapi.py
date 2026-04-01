@@ -2,12 +2,12 @@
 Tests for task 7: Verify OpenAPI auto-generation.
 Requirements: 6.1, 6.2, 6.3
 """
+
 import json
-import sys
 import os
+import sys
 from unittest.mock import MagicMock, patch
 
-import pytest
 from fastapi.testclient import TestClient
 
 # ---------------------------------------------------------------------------
@@ -32,14 +32,22 @@ _mock_scope.wait.return_value = {"status": "ok", "waited_seconds": 1.0}
 
 # Remove any previously cached server module so the patch takes effect.
 for _mod in list(sys.modules.keys()):
-    if _mod in ("server", "microscope_api"):
+    if _mod in ("server", "dreams.microscope", "dreams.microscope.real"):
         del sys.modules[_mod]
 
-sys.path.insert(0, os.path.dirname(__file__))
+_here = os.path.dirname(__file__)
+_root = os.path.dirname(_here)
+sys.path.insert(0, _here)
+sys.path.insert(0, _root)
+
+_mock_core = MagicMock()
+_mock_devices = MagicMock()
+_mock_devices.size.return_value = 0
+_mock_core.get_loaded_devices.return_value = _mock_devices
 
 _pycromanager_mock = MagicMock()
 with patch.dict("sys.modules", {"pycromanager": _pycromanager_mock}):
-    with patch("microscope_api.Core", return_value=MagicMock()):
+    with patch("dreams.microscope.real.Core", return_value=_mock_core):
         import server as _server_module
 
 _server_module.scope = _mock_scope
@@ -62,6 +70,7 @@ EXPECTED_TOOL_PATHS = [
 # ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
+
 
 def test_openapi_endpoint_returns_200():
     """Requirement 6.1: GET /openapi.json returns HTTP 200."""
@@ -135,7 +144,7 @@ def test_openapi_endpoints_have_response_schemas():
 
 
 def test_openapi_json_round_trip():
-    """Requirement 6.2: Serializing then deserializing the OpenAPI doc produces an equivalent document."""
+    """Requirement 6.2: The OpenAPI doc survives a JSON round trip."""
     response = client.get("/openapi.json")
     doc = response.json()
     serialized = json.dumps(doc)
