@@ -97,10 +97,9 @@ def main():
 
     except Exception as exc:
         print(f"\nFAILED: {exc}")
-        print(
-            "\nMake sure Micro-Manager is running "
-            "with the ZMQ server enabled."
-        )
+        message = "\nMake sure Micro-Manager is running "
+        message += "with the ZMQ server enabled."
+        print(message)
         sys.exit(1)
 
 
