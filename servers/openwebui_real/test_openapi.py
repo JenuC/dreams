@@ -36,7 +36,7 @@ for _mod in list(sys.modules.keys()):
         del sys.modules[_mod]
 
 _here = os.path.dirname(__file__)
-_root = os.path.dirname(_here)
+_root = os.path.dirname(os.path.dirname(_here))
 sys.path.insert(0, _here)
 sys.path.insert(0, _root)
 

@@ -9,6 +9,7 @@ def _():
     import marimo as mo
     from PIL import Image
     import json
+
     return Image, json, mo
 
 
@@ -16,16 +17,18 @@ def _():
 def _():
     from mcp import ClientSession, StdioServerParameters
     from mcp.client.stdio import stdio_client
+
     return ClientSession, StdioServerParameters, stdio_client
 
 
 @app.cell
 def _():
     import os
+
     _base = os.path.dirname(os.path.abspath(__file__))
-    _root = os.path.dirname(_base)  # one level up from microscope_mcp/
+    _root = os.path.dirname(os.path.dirname(_base))
     PYTHON = os.path.join(_root, ".venv", "Scripts", "python.exe")
-    SCRIPT = os.path.join(_base, "server_real.py")
+    SCRIPT = os.path.join(_base, "server.py")
     return PYTHON, SCRIPT
 
 
@@ -47,7 +50,11 @@ async def _(
 
     _pos = json.loads(_result.content[0].text)
     mo.callout(
-        mo.md(f"**Stage** &nbsp; X: `{_pos['x']:.3f}` &nbsp; Y: `{_pos['y']:.3f}` &nbsp; Z: `{_pos['z']:.3f}` µm"),
+        mo.md(
+            f"**Stage** &nbsp; X: `{_pos['x']:.3f}` "
+            f"&nbsp; Y: `{_pos['y']:.3f}` "
+            f"&nbsp; Z: `{_pos['z']:.3f}` µm"
+        ),
         kind="info",
     )
     return

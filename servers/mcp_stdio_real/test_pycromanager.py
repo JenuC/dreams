@@ -1,5 +1,5 @@
-"""
-Standalone test: verify pycromanager can connect to Micro-Manager and grab an image.
+r"""
+Standalone test for a pycromanager image capture.
 
 Prerequisites:
   - Micro-Manager 2.0 is running
@@ -7,7 +7,7 @@ Prerequisites:
   - Default port 4827 is open
 
 Run with:
-  .venv\Scripts\python.exe microscope_mcp\test_pycromanager.py
+    .venv\Scripts\python.exe servers\mcp_stdio_real\test_pycromanager.py
 """
 
 import sys
@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 def test_connection():
     print("1. Connecting to Micro-Manager via pycromanager...")
     from pycromanager import Core
+
     core = Core()
     print(f"   OK — Core version: {core.get_version_info()}")
     return core
@@ -41,21 +42,24 @@ def test_snap_image(core):
     tagged = core.get_tagged_image()
 
     from collections import OrderedDict
+
     tags = OrderedDict(sorted(tagged.tags.items()))
     pixels = tagged.pix
 
     height = tags["Height"]
-    width  = tags["Width"]
-    total  = pixels.shape[0]
-    nch    = total // (height * width)
+    width = tags["Width"]
+    total = pixels.shape[0]
+    nch = total // (height * width)
 
     if nch > 1:
         pixels = pixels.reshape(height, width, nch)
     else:
         pixels = pixels.reshape(height, width)
 
-    print(f"   OK — shape={pixels.shape}  dtype={pixels.dtype}  "
-          f"min={pixels.min()}  max={pixels.max()}")
+    print(
+        f"   OK — shape={pixels.shape}  dtype={pixels.dtype}  "
+        f"min={pixels.min()}  max={pixels.max()}"
+    )
     return pixels, height, width, nch
 
 
@@ -93,7 +97,10 @@ def main():
 
     except Exception as exc:
         print(f"\nFAILED: {exc}")
-        print("\nMake sure Micro-Manager is running with the ZMQ server enabled.")
+        print(
+            "\nMake sure Micro-Manager is running "
+            "with the ZMQ server enabled."
+        )
         sys.exit(1)
 
 

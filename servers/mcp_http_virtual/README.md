@@ -1,4 +1,4 @@
-# microscope_virtual
+# mcp_http_virtual
 
 A virtual microscope MCP server for development and testing of microscope control workflows.
 
@@ -10,48 +10,41 @@ a persistent connection and share state across multiple tool calls.
 
 ## Files
 
-- `microscope_api.py` — the `VirtualMicroscope` class and synthetic test image generators
-- `server.py` — FastMCP server wiring tools, resources, and prompts
+- `server.py` — FastMCP streamable-HTTP server wiring
+- `marimo_chat.py` — companion marimo UI for stage control and image capture
+- `dreams/microscope/virtual.py` — shared `VirtualMicroscope` backend
 
 ## Starting the server
 
 ```cmd
-.venv\Scripts\python.exe microscope_virtual\server.py
+.venv\Scripts\python.exe servers\mcp_http_virtual\server.py
 ```
 
 The server starts on `http://127.0.0.1:4200/mcp` by default.
 
 ## MCP Tools
 
-| Tool | Arguments | Description |
-|---|---|---|
-| `snap_image` | — | Captures an image, saves to a temp file, returns path + metadata |
-| `move_stage` | `x, y, z: float` | Moves the stage to absolute (x, y, z) in µm |
-| `get_stage_position` | — | Returns current `{x, y, z}` position |
-| `wait` | `seconds: float` | Pauses for the given duration |
-| `set_test_image` | `source: str` | Switches the virtual image source (see below) |
+- `snap_image`: captures an image, saves it to a temp file, and returns path + metadata.
+- `move_stage(x, y, z)`: moves the stage to absolute coordinates in µm.
+- `get_stage_position()`: returns the current `{x, y, z}` position.
+- `wait(seconds)`: pauses for the given duration.
+- `set_test_image(source)`: switches the virtual image source.
 
 ## MCP Resources
 
-| URI | MIME type | Description |
-|---|---|---|
-| `microscope://latest_image` | `image/png` | The most recently generated image as raw PNG bytes |
+- `microscope://latest_image` (`image/png`): the latest generated image as raw PNG bytes.
 
 ## MCP Prompts
 
-| Prompt | Description |
-|---|---|
-| `tile_scan_xy` | Generates an LLM prompt to run a 2D tiled XY acquisition at fixed Z |
+- `tile_scan_xy`: generates an LLM prompt to run a 2D tiled XY acquisition at fixed Z.
 
 ## Virtual image sources
 
 The `set_test_image` tool accepts one of three sources:
 
-| Source | Description |
-|---|---|
-| `gradient` | Horizontal grayscale gradient (default, always fast) |
-| `rings` | Concentric sine-wave rings — simulates a grayscale fluorescence pattern |
-| `spectrum` | RGB color gradient — simulates a multi-channel color image |
+- `gradient`: horizontal grayscale gradient.
+- `rings`: concentric sine-wave rings that simulate a fluorescence-like pattern.
+- `spectrum`: RGB color gradient that simulates a multi-channel image.
 
 All images are generated purely with numpy, no external downloads required.
 
@@ -70,7 +63,7 @@ The server uses `streamable-http` transport instead of stdio so that:
 - Stage position and other state persist across calls
 - Multiple clients can connect simultaneously
 
-## marimo UI (`chat_with_scope.py`)
+## marimo UI (`marimo_chat.py`)
 
 The companion marimo notebook provides:
 
