@@ -1,0 +1,1 @@
+copilot --additional-mcp-config '@.mcp.json' @args
