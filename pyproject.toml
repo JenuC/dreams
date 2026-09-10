@@ -5,16 +5,9 @@ description = "DReAMS – Data-Reactive Acquisition and Microscope Steering."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "mcp",
-    "streamlit",
-    "langchain",
-    "pycromanager",
-    #"pymmcore-plus",
-    #"ndv[jup]",
-    "marimo>=0.18.2",
-    "scikit-image>=0.26.0",
-    "pytest>=9.0.2",
-    "httpx>=0.28.1",
-    "pytest-asyncio>=1.3.0",
-    "ipython>=9.12.0",
+    "mcp>=1.23.1",
+    "numpy>=2.3.5",
+    "pillow>=12.0.0",
+    "pycromanager>=1.0.2",
+    "uvicorn>=0.38.0",
 ]

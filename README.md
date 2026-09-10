@@ -13,7 +13,7 @@ Data-Reactive Acquisition and Microscope Steering, aka DReAMS
 
 operation-notes
 start the http server
-    - python .\microscope_real\server.py
-    probabaly on :4201
+    - python .\servers\mcp_http_real\server.py
+    probably on :4201
 go to copilot and add (not local) mcp shows as tag1 http note
 once configured, agent can talk to mcp to get from microscope.
